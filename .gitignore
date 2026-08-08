@@ -1,0 +1,12 @@
+# 内部项目数据 —— 永不提交
+.workbuddy/
+
+# 旧版单文件（已被多页站点取代）
+AI_Infra_Learning_Atlas.html
+
+# 工具产物
+.playwright-mcp/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

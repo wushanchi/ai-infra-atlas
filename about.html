@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI Infra 教程仓库的维护指南：项目结构、如何新增/编辑资源、字段定义、部署方式与校验脚本。" />
+  <title>维护指南｜AI Infra 学习地图</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header class="topbar"><div class="shell topbar-inner">
+  <a class="brand" href="index.html"><span class="brand-mark">AI</span><span>Infra Atlas<small>系统化学习地图</small></span></a>
+  <nav class="nav">
+    <a href="index.html">首页</a>
+    <a href="resources.html">资源库</a>
+    <a href="paths.html">学习路径</a>
+    <a href="about.html">维护指南</a>
+    <button class="theme-toggle" id="themeToggle" title="切换主题">☾</button>
+  </nav>
+</div></header>
+
+<main>
+<section class="hero" style="padding:46px 0 26px"><div class="shell">
+  <div class="eyebrow">MAINTENANCE GUIDE</div>
+  <h1 style="font-size:clamp(28px,4.4vw,42px)">维护与<span class="gradient">更新指南</span></h1>
+  <p>本仓库是一套纯静态的 AI Infra 资源导航站，数据与展示分离，便于长期维护。所有资源集中在 <code>data/resources.js</code> 一个文件里，新增或修改资源无需改动任何 HTML/CSS。</p>
+</div></section>
+
+<section class="block"><div class="shell"><div class="prose">
+  <h2>项目结构</h2>
+  <pre><code>ai-infra-tutorial-deephy/
+├── index.html          # 入口页：路线图 + 阶段概览 + 路径摘要
+├── resources.html      # 资源库：筛选/搜索/进度/导出
+├── paths.html          # 学习路径 + 实战项目 + 能力目标
+├── about.html          # 本页：维护指南
+├── data/
+│   └── resources.js    # ★ 数据源（唯一需要维护的文件）
+├── assets/
+│   ├── style.css       # 共享样式（亮/暗双主题）
+│   └── app.js          # 共享脚本（主题/导航/进度/筛选）
+├── validate.py         # 数据校验脚本
+└── README.md           # 项目说明</code></pre>
+
+  <div class="callout">设计原则：数据与展示分离。所有页面通过 <code>&lt;script src="data/resources.js"&gt;</code> 加载数据，再由 <code>assets/app.js</code> 渲染。修改资源只需编辑 <code>data/resources.js</code>。</div>
+
+  <h2>如何新增 / 编辑资源</h2>
+  <p>打开 <code>data/resources.js</code>，在对应 <code>stage</code> 的 <code>resources</code> 数组里追加一个对象即可。下面是一个完整字段示例：</p>
+  <pre><code>{
+  "id": "my-resource",                 // 唯一标识，英文短横线，不可重复
+  "title": "资源标题",
+  "org": "作者 / 机构",
+  "year": 2025,
+  "stage": 4,                          // 1-7，对应学习阶段
+  "focus": "推理引擎",                  // 专项方向
+  "type": "开源项目",                   // 资源类型
+  "platform": "GitHub",                // 平台
+  "level": "进阶",                     // 入门 / 进阶 / 高级 / 入门→进阶
+  "priority": "核心必修",               // 核心必修 | 强烈推荐 | 选修拓展
+  "effort": "20–40 小时",              // 预计投入
+  "format": "源码 + 文档",             // 形式
+  "tags": ["CUDA", "Kernel"],          // 标签数组
+  "desc": "一段客观描述，讲清楚是什么。",
+  "why": "推荐理由：为什么值得学、在路线中起什么作用。",
+  "url": "https://主链接",
+  "secondary": "https://补充链接",      // 可选
+  "secondaryLabel": "GitHub 仓库",     // 可选，补充链接的文字
+  "access": "访问说明（可选）",         // 可选，如需特殊说明
+  "maturity": "成熟度（可选）",         // 可选
+  "order": 0                           // 阶段内排序，数字越小越靠前
+}</code></pre>
+
+  <h3>字段速查</h3>
+  <ul>
+    <li><b>id</b>：唯一，英文+短横线，用于进度标记与去重。</li>
+    <li><b>stage</b>：1 全景基础 / 2 硬件并行 / 3 算子压缩 / 4 推理引擎 / 5 分布式通信 / 6 性能度量 / 7 生产部署。</li>
+    <li><b>priority</b>：只能填「核心必修」「强烈推荐」「选修拓展」三者之一（影响颜色与排序权重）。</li>
+    <li><b>order</b>：阶段内排序，建议从 0 开始递增。</li>
+    <li><b>url / secondary</b>：主链接必填；补充链接（如 GitHub 仓库、论文、播放列表）选填。</li>
+  </ul>
+
+  <h2>校验数据</h2>
+  <p>修改后建议运行校验脚本，检查必填字段、ID 唯一性与优先级取值：</p>
+  <pre><code>python validate.py</code></pre>
+  <p>脚本会输出每个缺失/异常字段，全部通过即数据完整。它还会同步生成 <code>data/resources.json</code>，方便其他工具读取。</p>
+
+  <h2>本地预览</h2>
+  <p>本站为纯静态站点，直接用浏览器打开 <code>index.html</code> 即可预览（数据通过 <code>&lt;script&gt;</code> 加载，兼容 <code>file://</code> 协议，无需起服务器）。如需带热重载的开发体验，可在项目目录任选其一：</p>
+  <pre><code># 方式一：Python 内置服务器
+python -m http.server 8000
+
+# 方式二：Node 静态服务器
+npx serve .</code></pre>
+  <p>然后访问 <code>http://localhost:8000</code>。</p>
+
+  <h2>部署到 GitHub Pages</h2>
+  <ol>
+    <li>在 GitHub 创建仓库（如 <code>ai-infra-guide</code>）并推送全部文件。</li>
+    <li>进入仓库 <b>Settings → Pages</b>，Source 选 <code>Deploy from a branch</code>，分支选 <code>main</code>、目录选 <code>/ (root)</code>，保存。</li>
+    <li>稍候片刻即可通过 <code>https://&lt;用户名&gt;.github.io/ai-infra-guide/</code> 访问。</li>
+    <li>后续更新只需推送代码，Pages 自动重新部署。</li>
+  </ol>
+
+  <h2>更新建议</h2>
+  <ul>
+    <li>AI Infra 演进快，建议每季度复查一次链接有效性（可用 <code>validate.py --check-urls</code> 联网校验，见脚本说明）。</li>
+    <li>新增资源时务必填 <code>why</code>，说清它在学习路线中的定位，避免堆砌。</li>
+    <li>同一主题若已有更优资源，考虑替换而非无限追加，保持地图精炼。</li>
+    <li>优先级会随时间变化：曾是「核心必修」的工具若被取代，及时降级。</li>
+  </ul>
+
+  <h2>与参考项目的关系</h2>
+  <p>本项目参考了 <a class="linky" href="https://caomaolufei.github.io/AIInfraGuide/" target="_blank" rel="noopener">AIInfraGuide</a> 的主题划分思路，但定位不同：AIInfraGuide 是原创中文教程站，本项目是<b>资源导航与学习路线地图</b>，聚合课程、源码、官方文档与视频，按七阶段知识依赖重组，帮助系统规划学习路径。两者互补：用本地图规划路线，用 AIInfraGuide 等教程深入学习具体主题。</p>
+</div></section>
+</main>
+
+<footer><div class="shell footer-grid">
+  <div>
+    <div>AI Infra Learning Atlas｜维护指南</div>
+    <div class="links"><a href="index.html">首页</a><a href="resources.html">资源库</a><a href="paths.html">学习路径</a></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>已完成进度</span><span id="progressText">0 / 0</span></div>
+    <div class="progress"><div id="progressBar"></div></div>
+  </div>
+</div></footer>
+<div class="toast" id="toast">已保存</div>
+
+<script src="data/resources.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

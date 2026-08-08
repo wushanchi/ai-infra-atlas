@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI Infra 三条推荐学习路径、四个阶段性实战项目与七阶段能力目标，帮助你按岗位目标压缩学习主线。" />
+  <title>学习路径与实战项目｜AI Infra 学习地图</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header class="topbar"><div class="shell topbar-inner">
+  <a class="brand" href="index.html"><span class="brand-mark">AI</span><span>Infra Atlas<small>系统化学习地图</small></span></a>
+  <nav class="nav">
+    <a href="index.html">首页</a>
+    <a href="resources.html">资源库</a>
+    <a href="paths.html">学习路径</a>
+    <a href="about.html">维护指南</a>
+    <button class="theme-toggle" id="themeToggle" title="切换主题">☾</button>
+  </nav>
+</div></header>
+
+<main>
+<section class="hero" style="padding:46px 0 26px"><div class="shell">
+  <div class="eyebrow">LEARNING PATHS & PROJECTS</div>
+  <h1 style="font-size:clamp(28px,4.4vw,42px)">学习路径与<span class="gradient">实战项目</span></h1>
+  <p>根据当前岗位目标选择一条主线压缩学习，不必机械完成全部资源。每条路径串联若干阶段；每个实战项目对应一次能力跃迁，并可作为 GitHub 仓库或团队教程沉淀。</p>
+</div></section>
+
+<!-- 三条路径 -->
+<section class="block"><div class="shell">
+  <div class="section-head"><div><h2>三条推荐学习路径</h2></div></div>
+  <div class="pathways">
+    <article class="pathway panel">
+      <span class="tag">主线 · 24–32 周</span>
+      <h3>系统级 AI Infra</h3>
+      <p class="fit">适合建立完整技术树，覆盖从硬件到生产的全链路。</p>
+      <ol><li>AIInfraGuide + MLSysBook 建全景</li><li>CS149 / CUDA MODE + Triton</li><li>UW / CMU LLM Systems</li><li>mini-infer → vLLM / SGLang</li><li>NCCL → Dynamo / llm-d</li><li>GuideLLM + Nsight 做优化闭环</li></ol>
+    </article>
+    <article class="pathway panel">
+      <span class="tag">专项 · 12–18 周</span>
+      <h3>模型推理系统</h3>
+      <p class="fit">适合当前直接投入推理优化工作。</p>
+      <ol><li>模型执行与 KV Cache 核算</li><li>tiny-llm / mini-infer 跟练</li><li>vLLM Anatomy + Mini-SGLang</li><li>FlashAttention / FlashInfer</li><li>P/D 解耦与集合通信</li><li>多引擎 Benchmark 与 Trace</li></ol>
+    </article>
+    <article class="pathway panel">
+      <span class="tag">平台分支 · 16–24 周</span>
+      <h3>国产 NPU / 昇腾 CANN</h3>
+      <p class="fit">把通用系统知识映射到当前工作平台。</p>
+      <ol><li>通用 GPU/NPU 性能模型</li><li>Ascend C 编程与 Tiling</li><li>CANN 推理框架课程</li><li>cann-recipes-infer 源码映射</li><li>HCCL 与并行策略分析</li><li>MindStudio Profiling 闭环</li></ol>
+    </article>
+  </div>
+</div></section>
+
+<!-- 七阶段能力目标 -->
+<section class="block"><div class="shell">
+  <div class="section-head"><div><h2>七阶段能力目标</h2><p>每个阶段都设定一个可检验的能力目标，学完该阶段应能达成。</p></div></div>
+  <div class="stage-overview" id="stageGoals"></div>
+</div></section>
+
+<!-- 四个实战项目 -->
+<section class="block"><div class="shell">
+  <div class="section-head"><div><h2>四个阶段性实战项目</h2><p>每个项目对应学习顺序中的一个能力跃迁，并能沉淀为 GitHub 仓库或团队教程。</p></div></div>
+  <div class="projects">
+    <article class="project panel">
+      <div class="pno">项目 01 · 对应阶段 4</div>
+      <h3>教学型推理引擎解剖</h3>
+      <p>选 mini-infer、Mini-SGLang 或 tiny-llm，画出 Request → Scheduler → KV Cache → ModelRunner → Kernel → Response 的完整数据流。</p>
+      <div class="deliverable">交付物：架构图、关键类调用链、一次完整请求 Trace 和模块对照表。</div>
+    </article>
+    <article class="project panel">
+      <div class="pno">项目 02 · 对应阶段 3</div>
+      <h3>Attention / GEMM Kernel 对照</h3>
+      <p>使用 Triton、FlashAttention/FlashInfer 实现或分析同类算子，比较数据布局、Tiling 和带宽瓶颈。</p>
+      <div class="deliverable">交付物：Roofline 估算、Kernel benchmark、Profile 报告和跨平台差异总结。</div>
+    </article>
+    <article class="project panel">
+      <div class="pno">项目 03 · 对应阶段 5</div>
+      <h3>分布式推理通信模型</h3>
+      <p>为 TP、EP、P/D 解耦建立 α–β 模型，并将 NCCL/NVSHMEM/DeepEP 的实测结果映射到模型。</p>
+      <div class="deliverable">交付物：拓扑图、通信量公式、微基准曲线和并行策略推荐。</div>
+    </article>
+    <article class="project panel">
+      <div class="pno">项目 04 · 对应阶段 6</div>
+      <h3>生产负载 Benchmark 闭环</h3>
+      <p>用 GuideLLM/GenAI-Perf 生成并发、固定速率和 sweep 流量，对 vLLM/SGLang 测 TTFT、ITL、吞吐、尾延迟和饱和点。</p>
+      <div class="deliverable">交付物：版本锁定配置、CSV/HTML 报告、Trace 证据、优化前后回归结论。</div>
+    </article>
+  </div>
+</div></section>
+
+<!-- 方法论 -->
+<section class="block"><div class="shell">
+  <div class="section-head"><div><h2>学习方法论</h2></div></div>
+  <div class="principles">
+    <div class="principle panel"><strong>先依赖、后专题</strong><span>先理解模型执行、硬件和性能模型，再进入框架新特性，避免只记 API 名称。</span></div>
+    <div class="principle panel"><strong>教程与源码配对</strong><span>每学一项机制，至少在教学型仓库或生产仓库中找到对应实现和调用链。</span></div>
+    <div class="principle panel"><strong>结论必须可测</strong><span>任何“更快、更省显存”都应绑定模型、硬件、流量、版本和指标定义。</span></div>
+    <div class="principle panel"><strong>跨平台抽象</strong><span>把 CUDA/NCCL 知识抽象成并行层次、存储层次、通信原语和运行时，再映射到 CANN/HCCL。</span></div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="shell footer-grid">
+  <div>
+    <div>AI Infra Learning Atlas｜学习路径</div>
+    <div class="links"><a href="index.html">首页</a><a href="resources.html">资源库</a><a href="about.html">维护指南</a></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>已完成进度</span><span id="progressText">0 / 0</span></div>
+    <div class="progress"><div id="progressBar"></div></div>
+  </div>
+</div></footer>
+<div class="toast" id="toast">已保存</div>
+
+<script src="data/resources.js"></script>
+<script src="assets/app.js"></script>
+<script>
+// 渲染阶段能力目标（paths 页专用）
+document.addEventListener("DOMContentLoaded", function () {
+  var D = window.AI_INFRA_DATA || {};
+  var box = document.getElementById("stageGoals");
+  if (!box || !D.stages) return;
+  box.innerHTML = D.stages.map(function (s) {
+    return '<article class="stage-card">' +
+      '<div class="num">阶段 ' + s.id + '</div>' +
+      '<strong>' + s.name + '</strong>' +
+      '<span>' + s.desc + '</span>' +
+      '<em>目标：' + (s.goal || "") + '</em>' +
+      '</article>';
+  }).join("");
+});
+</script>
+</body>
+</html>

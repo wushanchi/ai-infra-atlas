@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI Infra 资源库：64 项精选课程、源码、官方文档与视频，按七阶段重组，支持按阶段、类型、平台、优先级筛选与搜索，可标记学习进度并导出清单。" />
+  <title>资源库｜AI Infra 学习地图</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header class="topbar"><div class="shell topbar-inner">
+  <a class="brand" href="index.html"><span class="brand-mark">AI</span><span>Infra Atlas<small>系统化学习地图</small></span></a>
+  <nav class="nav">
+    <a href="index.html">首页</a>
+    <a href="resources.html">资源库</a>
+    <a href="paths.html">学习路径</a>
+    <a href="about.html">维护指南</a>
+    <button class="theme-toggle" id="themeToggle" title="切换主题">☾</button>
+  </nav>
+</div></header>
+
+<main>
+<section class="hero" style="padding:46px 0 26px"><div class="shell">
+  <div class="eyebrow">RESOURCE LIBRARY · 64 CURATED ITEMS</div>
+  <h1 style="font-size:clamp(28px,4.4vw,42px)">按阶段重组的<span class="gradient">资源库</span></h1>
+  <p>每张卡片同时标注学习阶段、资源类型、专项方向、平台与优先级。默认按学习顺序分组便于建立主线；也可按资源类型、平台和优先级快速筛选。右下角 ✓ 可标记完成，数据仅保存在本地浏览器。</p>
+</div></section>
+
+<section style="padding-top:8px"><div class="shell">
+  <div class="filters panel">
+    <input id="search" class="control search" placeholder="搜索 vLLM / PagedAttention / NCCL / CUDA / Benchmark..." />
+    <select id="stage" class="control"><option value="all">全部学习阶段</option></select>
+    <select id="type" class="control"><option value="all">全部资源类型</option></select>
+    <select id="platform" class="control"><option value="all">全部平台</option></select>
+    <select id="priority" class="control"><option value="all">全部优先级</option></select>
+  </div>
+  <div class="summary-row">
+    <span id="resultCount"></span>
+    <span><button class="btn ghost" id="exportBtn" style="padding:7px 12px;font-size:13px">导出学习清单 (.md)</button></span>
+  </div>
+  <div id="cards"></div>
+</div></section>
+</main>
+
+<footer><div class="shell footer-grid">
+  <div>
+    <div>AI Infra Learning Atlas｜资源库</div>
+    <div class="links"><a href="index.html">首页</a><a href="paths.html">学习路径</a><a href="about.html">维护指南</a></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>已完成进度</span><span id="progressText">0 / 0</span></div>
+    <div class="progress"><div id="progressBar"></div></div>
+  </div>
+</div></footer>
+<div class="toast" id="toast">已保存</div>
+
+<script src="data/resources.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="系统化的 AI Infra 学习地图：按七阶段知识依赖组织的 64 项课程、源码、官方文档与视频资源，含学习路径、实战项目与维护指南。" />
+  <meta name="theme-color" content="#0aa5e2" />
+  <title>AI Infra 学习地图｜从知识全景到推理系统实战</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+<header class="topbar"><div class="shell topbar-inner">
+  <a class="brand" href="index.html"><span class="brand-mark">AI</span><span>Infra Atlas<small>系统化学习地图</small></span></a>
+  <nav class="nav">
+    <a href="index.html">首页</a>
+    <a href="resources.html">资源库</a>
+    <a href="paths.html">学习路径</a>
+    <a href="about.html">维护指南</a>
+    <button class="theme-toggle" id="themeToggle" title="切换主题">☾</button>
+  </nav>
+</div></header>
+
+<main>
+<!-- Hero -->
+<section class="hero"><div class="shell">
+  <div class="eyebrow">AI INFRA LEARNING ATLAS · CURATED ROADMAP</div>
+  <h1>从知识全景到<br><span class="gradient">推理系统实战</span></h1>
+  <p>不按“视频、课程、框架”简单堆叠，而是依据 AI Infra 能力形成的先后依赖重新组织：先建立系统全景与模型执行认知，再进入并行硬件、Kernel 与编译，随后拆解单机推理引擎、分布式 Serving、性能优化闭环，最终补齐生产部署与研究视野。共精选 <b id="statTotal2">64</b> 项资源，覆盖课程、源码、官方文档与视频。</p>
+  <div class="hero-actions">
+    <a class="btn primary" href="#roadmap">按学习顺序开始</a>
+    <a class="btn" href="resources.html">浏览全部资源</a>
+    <a class="btn ghost" href="paths.html">查看学习路径</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><strong id="statTotal">85</strong><span>精选资源</span></div>
+    <div class="stat"><strong id="statMust">28</strong><span>核心必修</span></div>
+    <div class="stat"><strong>7</strong><span>学习阶段</span></div>
+    <div class="stat"><strong>3</strong><span>学习路径</span></div>
+    <div class="stat"><strong>4</strong><span>实战项目</span></div>
+  </div>
+</div></section>
+
+<!-- 七阶段路线图 -->
+<section class="block" id="roadmap"><div class="shell">
+  <div class="section-head">
+    <div><h2>七阶段学习路线</h2><p>阶段编号表示知识依赖顺序，不表示所有资源都必须学完。点击任一阶段卡片可跳转到该阶段的资源筛选。</p></div>
+    <a class="btn ghost" href="resources.html">进入资源库 →</a>
+  </div>
+  <div id="stageOverview" class="stage-overview"></div>
+  <div class="stage-flow">
+    <span>阶段1 全景</span><span class="arrow">→</span>
+    <span>阶段2 硬件/并行</span><span class="arrow">→</span>
+    <span>阶段3 算子/压缩</span><span class="arrow">→</span>
+    <span>阶段4 推理引擎</span><span class="arrow">→</span>
+    <span>阶段5 分布式</span><span class="arrow">→</span>
+    <span>阶段6 性能度量</span><span class="arrow">→</span>
+    <span>阶段7 生产部署</span>
+  </div>
+</div></section>
+
+<!-- 三条学习路径 -->
+<section class="block" id="paths-summary"><div class="shell">
+  <div class="section-head"><div><h2>三条推荐学习路径</h2><p>可根据当前岗位目标压缩主线，不必机械完成全部资源。详见<a class="linky" href="paths.html">学习路径页</a>。</p></div></div>
+  <div class="pathways">
+    <article class="pathway panel">
+      <span class="tag">主线 · 24–32 周</span>
+      <h3>系统级 AI Infra</h3>
+      <p class="fit">适合建立完整技术树。</p>
+      <ol><li>AIInfraGuide + MLSysBook 建全景</li><li>CS149 / CUDA MODE + Triton</li><li>UW / CMU LLM Systems</li><li>mini-infer → vLLM / SGLang</li><li>NCCL → Dynamo / llm-d</li><li>GuideLLM + Nsight 做优化闭环</li></ol>
+    </article>
+    <article class="pathway panel">
+      <span class="tag">专项 · 12–18 周</span>
+      <h3>模型推理系统</h3>
+      <p class="fit">适合直接投入推理优化工作。</p>
+      <ol><li>模型执行与 KV Cache 核算</li><li>tiny-llm / mini-infer 跟练</li><li>vLLM Anatomy + Mini-SGLang</li><li>FlashAttention / FlashInfer</li><li>P/D 解耦与集合通信</li><li>多引擎 Benchmark 与 Trace</li></ol>
+    </article>
+    <article class="pathway panel">
+      <span class="tag">平台分支 · 16–24 周</span>
+      <h3>国产 NPU / 昇腾 CANN</h3>
+      <p class="fit">把通用系统知识映射到当前工作平台。</p>
+      <ol><li>通用 GPU/NPU 性能模型</li><li>Ascend C 编程与 Tiling</li><li>CANN 推理框架课程</li><li>cann-recipes-infer 源码映射</li><li>HCCL 与并行策略分析</li><li>MindStudio Profiling 闭环</li></ol>
+    </article>
+  </div>
+</div></section>
+
+<!-- 方法论 -->
+<section class="block" id="method"><div class="shell">
+  <div class="section-head"><div><h2>如何使用这张地图</h2><p>课程用于建立稳定原理，源码跟练用于形成代码结构认知，官方文档用于版本准确性，Benchmark 与 Profiling 用于验证结论，论文索引用于拓展边界。</p></div></div>
+  <div class="principles">
+    <div class="principle panel"><strong>先依赖、后专题</strong><span>先理解模型执行、硬件和性能模型，再进入框架新特性，避免只记 API 名称。</span></div>
+    <div class="principle panel"><strong>教程与源码配对</strong><span>每学一项机制，至少在教学型仓库或生产仓库中找到对应实现和调用链。</span></div>
+    <div class="principle panel"><strong>结论必须可测</strong><span>任何“更快、更省显存”都应绑定模型、硬件、流量、版本和指标定义。</span></div>
+    <div class="principle panel"><strong>跨平台抽象</strong><span>把 CUDA/NCCL 知识抽象成并行层次、存储层次、通信原语和运行时，再映射到 CANN/HCCL。</span></div>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="shell footer-grid">
+  <div>
+    <div>AI Infra Learning Atlas｜按七阶段知识依赖组织的课程、源码、工具与研究资源。</div>
+    <div class="links">
+      <a href="resources.html">资源库</a><a href="paths.html">学习路径</a><a href="about.html">维护指南</a><a href="https://caomaolufei.github.io/AIInfraGuide/" target="_blank" rel="noopener">参考：AIInfraGuide</a>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>已完成进度</span><span id="progressText">0 / 0</span></div>
+    <div class="progress"><div id="progressBar"></div></div>
+  </div>
+</div></footer>
+<div class="toast" id="toast">已保存</div>
+
+<script src="data/resources.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

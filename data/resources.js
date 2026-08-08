@@ -1,0 +1,434 @@
+/* ==========================================================================
+   AI Infra 教程仓库 · 资源数据库（canonical data source）
+   --------------------------------------------------------------------------
+   维护说明：
+   - 本文件是整个网站的数据来源，所有页面通过 <script> 加载它（兼容 file://
+     本地预览与 GitHub Pages 等静态托管，无需服务器）。
+   - 新增资源：在对应 stage 的 resources 数组里追加一个对象即可，字段说明见下。
+   - 字段：id(唯一), title, org, year, stage(1-7), focus, type, platform,
+          level, priority(核心必修|强烈推荐|选修拓展), effort, format, tags[],
+          desc, why, url(主链接), secondary(补充链接), secondaryLabel,
+          maturity(可选), access(可选)
+   - stage 定义见下方 stages 数组。
+   - 同步：修改后建议用根目录 validate.py 校验字段完整性。
+   ========================================================================== */
+window.AI_INFRA_DATA = {
+
+/* ---------- 七个学习阶段（按知识依赖排序） ---------- */
+stages: [
+  { id: 1, name: "全景认知与系统基础", short: "全景与基础",
+    desc: "建立 AI Infra 全栈地图，理解 Transformer 执行、深度学习框架与系统性能的基本语言。",
+    goal: "能说清一次前向传播在硬件/框架/算子层各发生了什么" },
+  { id: 2, name: "硬件、并行与编译基础", short: "硬件与并行",
+    desc: "掌握 GPU/NPU 架构、并行程序、通信代价、编译与 Kernel DSL，为底层优化打基础。",
+    goal: "能写出可跑的 CUDA/Triton kernel 并用 Roofline 估算瓶颈" },
+  { id: 3, name: "模型执行、算子与压缩", short: "算子与压缩",
+    desc: "深入 Attention、GEMM、量化、KV Cache 等关键计算路径，理解模型侧与算子侧优化。",
+    goal: "能复现/分析 FlashAttention 并解释 fused kernel 为何更快" },
+  { id: 4, name: "单机推理引擎与源码", short: "推理引擎",
+    desc: "从教学型引擎到 vLLM/SGLang/TensorRT-LLM，建立请求生命周期、调度器和运行时全貌。",
+    goal: "能画出一次请求从进入到吐 token 的完整数据流" },
+  { id: 5, name: "分布式推理与集合通信", short: "分布式与通信",
+    desc: "学习 TP/PP/EP、AllReduce/AllToAll、P/D 解耦、KV 传输与集群级路由调度。",
+    goal: "能为一种并行策略建立通信量公式并选型" },
+  { id: 6, name: "Profiling、Benchmark 与优化闭环", short: "性能与度量",
+    desc: "用 TTFT/ITL/吞吐/尾延迟与 Trace 建立“测量—定位—实验—回归”的性能工程闭环。",
+    goal: "能对推理引擎产出可信的 benchmark 报告与优化结论" },
+  { id: 7, name: "生产部署与研究扩展", short: "生产与前沿",
+    desc: "补齐服务编排、Kubernetes、可靠性与论文研究地图，形成面向生产和长期演进的能力。",
+    goal: "能在 K8s 上部署一套带 SLA 保障的推理服务" }
+],
+
+/* ---------- 三条推荐学习路径 ---------- */
+pathways: [
+  { name: "主线 · 系统级 AI Infra", weeks: "24–32 周", fit: "适合建立完整技术树",
+    steps: [
+      "AIInfraGuide + MLSysBook 建全景",
+      "CS149 / CUDA MODE + Triton",
+      "UW / CMU LLM Systems",
+      "mini-infer → vLLM / SGLang",
+      "NCCL → Dynamo / llm-d",
+      "GuideLLM + Nsight 做优化闭环"
+    ] },
+  { name: "专项 · 模型推理系统", weeks: "12–18 周", fit: "适合直接投入推理优化工作",
+    steps: [
+      "模型执行与 KV Cache 核算",
+      "tiny-llm / mini-infer 跟练",
+      "vLLM Anatomy + Mini-SGLang",
+      "FlashAttention / FlashInfer",
+      "P/D 解耦与集合通信",
+      "多引擎 Benchmark 与 Trace"
+    ] },
+  { name: "平台分支 · 国产 NPU / 昇腾 CANN", weeks: "16–24 周", fit: "把通用系统知识映射到当前工作平台",
+    steps: [
+      "通用 GPU/NPU 性能模型",
+      "Ascend C 编程与 Tiling",
+      "CANN 推理框架课程",
+      "cann-recipes-infer 源码映射",
+      "HCCL 与并行策略分析",
+      "MindStudio Profiling 闭环"
+    ] }
+],
+
+/* ---------- 四个阶段性实战项目 ---------- */
+projects: [
+  { no: "01", title: "教学型推理引擎解剖",
+    desc: "选 mini-infer、Mini-SGLang 或 tiny-llm，画出 Request → Scheduler → KV Cache → ModelRunner → Kernel → Response 的完整数据流。",
+    deliverable: "架构图、关键类调用链、一次完整请求 Trace 和模块对照表。",
+    stage: 4 },
+  { no: "02", title: "Attention / GEMM Kernel 对照",
+    desc: "使用 Triton、FlashAttention/FlashInfer 实现或分析同类算子，比较数据布局、Tiling 和带宽瓶颈。",
+    deliverable: "Roofline 估算、Kernel benchmark、Profile 报告和跨平台差异总结。",
+    stage: 3 },
+  { no: "03", title: "分布式推理通信模型",
+    desc: "为 TP、EP、P/D 解耦建立 α–β 模型，并将 NCCL/NVSHMEM/DeepEP 的实测结果映射到模型。",
+    deliverable: "拓扑图、通信量公式、微基准曲线和并行策略推荐。",
+    stage: 5 },
+  { no: "04", title: "生产负载 Benchmark 闭环",
+    desc: "用 GuideLLM/GenAI-Perf 生成并发、固定速率和 sweep 流量，对 vLLM/SGLang 测 TTFT、ITL、吞吐、尾延迟和饱和点。",
+    deliverable: "版本锁定配置、CSV/HTML 报告、Trace 证据、优化前后回归结论。",
+    stage: 6 }
+],
+
+/* ---------- 资源库（按 stage 分组，~85 项） ---------- */
+resources: [
+
+/* ===== Stage 1 · 全景认知与系统基础 ===== */
+{ id:"ai-infra-guide", title:"AIInfraGuide：中文 AI Infra 全栈教程", org:"caomaolufei / 开源", year:2026, stage:1, focus:"全栈知识体系", type:"体系化中文教程", platform:"通用 / NVIDIA 主线", level:"入门 → 高级", priority:"核心必修", effort:"持续学习", format:"在线教程 + GitHub", tags:["中文","学习路线","CUDA","推理优化"],
+  desc:"围绕前置知识、CUDA/算子、分布式训练和 LLM 推理优化建立中文全栈教程，已覆盖 PagedAttention、Continuous Batching、Prefix Cache、Chunked Prefill 等现代推理主题。",
+  why:"最适合作为中文知识主线和章节导航；部分高级章节仍在建设，工程细节需与官方文档和源码交叉验证。",
+  url:"https://caomaolufei.github.io/AIInfraGuide/", secondary:"https://github.com/caomaolufei/AIInfraGuide", secondaryLabel:"GitHub 仓库", order:0 },
+
+{ id:"mlsysbook-2026", title:"Introduction to Machine Learning Systems", org:"MLSysBook / MIT Press", year:2026, stage:1, focus:"深度学习系统", type:"开放教材", platform:"通用 / 多平台", level:"入门", priority:"强烈推荐", effort:"30–50 小时", format:"开放教材 + Labs + 模拟器", tags:["性能建模","框架内部","压缩","Serving"],
+  desc:"原则驱动的 AI 系统教材，覆盖框架内部、硬件加速、压缩、benchmark、serving 与运维，并提供 TinyTorch、MLSys·im 和课程 Slides。",
+  why:"适合建立定量分析习惯；可用模拟器先预测性能与成本，再在真实推理系统中验证。",
+  url:"https://mlsysbook.ai/vol1/index.html", secondary:"https://mlsysbook.ai/instructors/", secondaryLabel:"课程材料", order:1 },
+
+{ id:"karpathy-zero-to-hero", title:"Neural Networks: Zero to Hero", org:"Andrej Karpathy", year:2023, stage:1, focus:"模型与系统基础", type:"视频课程", platform:"YouTube", level:"入门 → 进阶", priority:"核心必修", effort:"25–45 小时", format:"视频 + Jupyter Notebook", tags:["Backpropagation","Transformer","nanoGPT","llm.c"],
+  desc:"从 micrograd、makemore 与手写反向传播，逐步进入 Transformer、GPT Tokenizer、GPT-2 训练，并扩展到 llm.c 与 llama2.c。是理解模型执行的最佳起点。",
+  why:"AI Infra 的模型执行前置主线：先理解计算图、张量形状、训练循环和 Transformer，再进入推理引擎、Kernel 与系统优化。",
+  url:"https://karpathy.ai/zero-to-hero.html", secondary:"https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ", secondaryLabel:"YouTube 播放列表", order:2 },
+
+{ id:"karpathy-gpt-roadmap-cn", title:"Karpathy GPT 学习路线图（中文注释版）", org:"Wu Shanchi / Andrej Karpathy", year:2026, stage:1, focus:"模型与系统基础", type:"体系教程 / 中文注释", platform:"GitHub Pages", level:"入门 → 进阶", priority:"强烈推荐", effort:"25–45 小时", format:"路线图 + 视频 + 中文注释 + Colab", tags:["中文","Backpropagation","nanoGPT","llm.c"],
+  desc:"基于 Karpathy Zero to Hero 系列整理的中文学习路线，配中文注释与 Colab，逐步进入 Transformer 与 GPT 训练。",
+  why:"为不习惯纯英文视频的读者提供中文导航与代码注释，降低入门门槛。",
+  url:"https://wushanchi.github.io/karpathy-gpt-roadmap/", secondary:"https://github.com/wushanchi/karpathy-gpt-roadmap", secondaryLabel:"GitHub 仓库", order:3 },
+
+{ id:"cs336", title:"CS336: Language Modeling from Scratch", org:"Stanford University", year:2025, stage:1, focus:"LLM 系统与训练", type:"公开课程", platform:"Stanford Online / YouTube", level:"进阶", priority:"核心必修", effort:"80–120 小时", format:"17 讲 + 5 个大作业", tags:["从零训练","数据工程","并行","推理部署"],
+  desc:"从零实现 Transformer、处理 1T Token 数据、在 GPU 集群训练 7B 模型、做 RLHF/DPO 对齐并完成推理部署。50% 算法 50% 工程，覆盖当前工业界最佳实践。",
+  why:"可能是全网最好的大模型系统课；作业极具价值，能把碎片知识系统化，覆盖训练到推理全链路。",
+  url:"https://stanford-cs336.github.io/spring2025/", secondary:"https://www.youtube.com/playlist?list=PLoROMvodv4rOY23Y0BoGoBGgQ1zmU_MT_", secondaryLabel:"YouTube 播放列表", order:4 },
+
+{ id:"cmu-dlsys", title:"CMU 10-414/714: Deep Learning Systems", org:"CMU / Tianqi Chen", year:2022, stage:1, focus:"深度学习系统", type:"公开课程", platform:"dlsyscourse.org", level:"进阶", priority:"强烈推荐", effort:"40–60 小时", format:"视频 + 4 个大作业", tags:["Autograd","计算图","框架内部","TVM"],
+  desc:"从零实现自动微分、计算图与运行时，构建一个能跑的深度学习框架。TVM/MLC 作者陈天奇主讲。",
+  why:"理解框架内部（autograd、graph、runtime）的最佳课程，是从框架使用者走向系统构建者的关键一步。",
+  url:"https://dlsyscourse.org/", secondary:"https://www.youtube.com/playlist?list=PLUR8-dNlUYMjnkPnkSlzPDZ8KwSnXJA2j", secondaryLabel:"YouTube 讲座", order:5 },
+
+{ id:"cmu-llm-systems", title:"CMU 11-868: LLM Systems", org:"Carnegie Mellon University", year:2025, stage:1, focus:"LLM 系统", type:"公开课程", platform:"llmsystem.github.io", level:"进阶", priority:"强烈推荐", effort:"30–50 小时", format:"讲座 + 项目", tags:["Serving","KV Cache","吞吐","推理系统"],
+  desc:"聚焦 LLM 服务系统的课程，覆盖 KV Cache、批处理调度、吞吐与延迟优化、推理系统设计。",
+  why:"直接面向 LLM 推理系统，与 Stage 4 推理引擎主题衔接紧密。",
+  url:"https://llmsystem.github.io/llmsystem2025spring/", order:6 },
+
+{ id:"uw-llm-systems", title:"UW CSE 599M: LLM Systems (Systems for ML)", org:"University of Washington", year:2024, stage:1, focus:"LLM 系统", type:"公开课程", platform:"YouTube", level:"进阶", priority:"强烈推荐", effort:"20–40 小时", format:"视频 + 阅读", tags:["Serving","分布式","推理优化"],
+  desc:"华盛顿大学 LLM 系统课程，讨论大规模 LLM 推理与训练系统的设计，含调度、显存管理与分布式通信。",
+  why:"从系统视角看 LLM，补充 CMU 路线，适合建立推理系统全局观。",
+  url:"https://www.youtube.com/playlist?list=PLTPQExM31Kf-A7orQkPGL6TS-zZalJYJU", order:7 },
+
+{ id:"stanford-mlsys-seminar", title:"Stanford MLSys Seminar", org:"Stanford CRFM", year:2025, stage:1, focus:"研究前沿", type:"研讨会", platform:"YouTube", level:"高级", priority:"选修拓展", effort:"按需", format:"讲座视频", tags:["论文","前沿","系统"],
+  desc:"Stanford 举办的 ML 系统研讨会系列，邀请工业界与学术界讲者分享最新系统研究。",
+  why:"跟踪前沿研究、拓展视野的好入口；适合在掌握基础后定期跟进。",
+  url:"https://mlsys.stanford.edu/", order:8 },
+
+/* ===== Stage 2 · 硬件、并行与编译基础 ===== */
+{ id:"cs149", title:"CS149: Parallel Computing", org:"Stanford University", year:2025, stage:2, focus:"并行计算", type:"公开课程", platform:"Stanford Online", level:"进阶", priority:"核心必修", effort:"40–60 小时", format:"讲座 + 编程作业", tags:["SIMD","GPU","Roofline","性能模型"],
+  desc:"并行计算基础课，覆盖 SIMD、GPU 并行、Roofline 性能模型与 ISPC/CUDA 编程，建立性能思维。",
+  why:"建立“并行层次 + 存储层次 + 性能上界估算”的硬核基础，是 GPU Kernel 优化的前置。",
+  url:"https://gfxcourses.stanford.edu/cs149/fall25", order:0 },
+
+{ id:"cmu-15418", title:"CMU 15-418/618: Parallel Computer Architecture and Programming", org:"Carnegie Mellon University", year:2023, stage:2, focus:"并行体系结构", type:"公开课程", platform:"CMU", level:"进阶", priority:"强烈推荐", effort:"40–60 小时", format:"讲座 + 实验", tags:["并行","体系结构","GPU","Cache"],
+  desc:"CMU 经典并行体系结构与编程课程，深入并行硬件、缓存一致性、GPU 架构与并行算法。",
+  why:"与 CS149 互补，从体系结构层面理解为什么并行程序这样写。",
+  url:"https://www.cs.cmu.edu/afs/cs/academic/class/15418-s23/www/", order:1 },
+
+{ id:"berkeley-cs61c", title:"UC Berkeley CS61C: Great Ideas in Computer Architecture", org:"UC Berkeley", year:2024, stage:2, focus:"体系结构基础", type:"公开课程", platform:"Berkeley", level:"入门", priority:"强烈推荐", effort:"30–50 小时", format:"讲座 + Lab", tags:["体系结构","C","汇编","并行"],
+  desc:"Berkeley 体系结构基础课，覆盖 C 语言、汇编、内存层级与并行基础，是理解硬件的起点。",
+  why:"GPU 编程的物理层前置；NVIDIA 内部 CUDA 训练路径也把它列为第一阶段。",
+  url:"https://cs61c.org/", order:2 },
+
+{ id:"cuda-mode", title:"CUDA MODE: GPU 编程社区课程", org:"GPU MODE / PyTorch Core Devs", year:2025, stage:2, focus:"CUDA 编程", type:"视频课程", platform:"YouTube + GitHub", level:"入门 → 高级", priority:"核心必修", effort:"持续学习", format:"系列讲座 + Slides + 代码", tags:["CUDA","Triton","PyTorch","Kernel"],
+  desc:"由几位 PyTorch Core Dev 主导的 GPU 编程社区课程，系统且专业，关注“用 CUDA 能做什么”而非陷入术语细节。含 Slides、脚本与 Discord 社区。",
+  why:"目前最系统的现代 CUDA/Triton 学习资源之一，社区活跃、持续更新，强烈推荐作为 CUDA 主线。",
+  url:"https://www.youtube.com/@GPUMODE", secondary:"https://github.com/gpu-mode/lectures", secondaryLabel:"GitHub 讲义仓库", order:3 },
+
+{ id:"freecodecamp-cuda", title:"CUDA Programming Course – High-Performance Computing", org:"freeCodeCamp", year:2024, stage:2, focus:"CUDA 编程", type:"视频课程", platform:"YouTube", level:"入门 → 中级", priority:"强烈推荐", effort:"12 小时", format:"12 小时视频", tags:["CUDA","Kernel","Triton","PyTorch 扩展"],
+  desc:"12 小时 CUDA 从零开始课程，覆盖 kernel、Triton、PyTorch 扩展，适合快速上手。",
+  why:"单视频长度友好、内容完整，适合在进入 CUDA MODE 前建立整体认知。",
+  url:"https://www.youtube.com/watch?v=86FAWCzJdYA", order:4 },
+
+{ id:"cuda-programming-guide", title:"CUDA C++ Programming Guide（官方文档）", org:"NVIDIA", year:2025, stage:2, focus:"CUDA 编程", type:"官方文档", platform:"NVIDIA", level:"入门 → 高级", priority:"核心必修", effort:"按需查阅", format:"在线文档", tags:["CUDA","官方","线程模型","内存"],
+  desc:"NVIDIA 官方 CUDA 编程指南，覆盖线程/块/网格模型、内存空间、同步与最佳实践。",
+  why:"权威、版本准确，是所有 CUDA 学习的基准参照，建议精读前 5 章。",
+  url:"https://docs.nvidia.com/cuda/cuda-c-programming-guide/", order:5 },
+
+{ id:"pmpp-book", title:"Programming Massively Parallel Processors (PMPP)", org:"Kirk & Hwu / Elsevier", year:2024, stage:2, focus:"GPU 架构与编程", type:"教材", platform:"纸质 / 电子书", level:"入门 → 进阶", priority:"强烈推荐", effort:"40–60 小时", format:"教材 + 代码", tags:["GPU","CUDA","架构","教材"],
+  desc:"GPU 并行编程经典教材，系统讲解 GPU 架构与 CUDA 编程，CUDA MODE 课程即以此为主要参考书。",
+  why:"最系统的 GPU 编程教科书，适合建立完整心智模型。",
+  url:"https://www.elsevier.com/books/programming-massively-parallel-processors/kirk/978-0-323-91231-8", order:6 },
+
+{ id:"triton-lang", title:"Triton: GPU Kernel 编程语言与编译器", org:"OpenAI", year:2025, stage:2, focus:"Kernel DSL", type:"开源项目 + 文档", platform:"GitHub", level:"进阶", priority:"核心必修", effort:"20–40 小时", format:"文档 + 教程 + 代码", tags:["Triton","Python","Kernel","torch.compile"],
+  desc:"用 Python 写高性能 GPU kernel 的语言与编译器，PyTorch 2.0+ 内置。自动处理内存合并、共享内存与线程调度，性能接近手写 CUDA。",
+  why:"现代 AI Infra 的必备技能；很多生产 kernel（FlashAttention v2+）已用 Triton 实现，学习投入产出比高。",
+  url:"https://github.com/triton-lang/triton", secondary:"https://triton-lang.org/main/getting-started/tutorials/index.html", secondaryLabel:"官方教程", order:7 },
+
+{ id:"mlc-llm-compilation", title:"Machine Learning Compilation", org:"MLC.ai / Tianqi Chen", year:2022, stage:2, focus:"ML 编译", type:"公开课程", platform:"mlc.ai", level:"进阶", priority:"强烈推荐", effort:"30–40 小时", format:"课程 + 实践", tags:["TVM","MLIR","编译","Kernel"],
+  desc:"机器学习编译课程，覆盖 TVM、Kernel 调度、算子融合与跨平台部署，有中文版。",
+  why:"从编译视角理解算子优化与跨硬件部署，是 Kernel/编译方向的关键课程。",
+  url:"https://mlc.ai/summer22-zh/", order:8 },
+
+{ id:"cuda-learn-notes", title:"CUDA-Learn-Notes（中文 CUDA 学习笔记）", org:"DefTruth / 开源", year:2025, stage:2, focus:"CUDA 编程", type:"GitHub 教程", platform:"GitHub", level:"入门 → 高级", priority:"强烈推荐", effort:"按需", format:"代码 + 笔记", tags:["中文","CUDA","Kernel","优化"],
+  desc:"系统化的 CUDA 学习笔记与代码实现，覆盖基础到进阶 kernel 优化，中文社区高星项目。",
+  why:"中文 CUDA 学习的优质实践仓库，可作为 CUDA MODE 的中文对照与练习库。",
+  url:"https://github.com/DefTruth/CUDA-Learn-Notes", order:9 },
+
+{ id:"how-to-optim-cuda", title:"how-to-optim-algorithm-in-cuda", org:"BBuf / 开源", year:2025, stage:2, focus:"CUDA 算子优化", type:"GitHub 教程", platform:"GitHub", level:"进阶", priority:"强烈推荐", effort:"按需", format:"代码 + 笔记", tags:["中文","CUDA","算法优化","cuda-mode 笔记"],
+  desc:"记录如何基于 CUDA 优化常见算法，含 CUDA MODE 课程逐课中文学习笔记，并维护深度学习框架与编译器学习仓库。",
+  why:"把 CUDA MODE 课程做了中文笔记落地，是英文课程的高质量中文辅助。",
+  url:"https://github.com/bssrdf/how-to-optim-algorithm-in-cuda", order:10 },
+
+/* ===== Stage 3 · 模型执行、算子与压缩 ===== */
+{ id:"flash-attention", title:"FlashAttention / FlashAttention-2/3", org:"Tri Dao / Dao-AILab", year:2024, stage:3, focus:"Attention 算子", type:"开源项目 + 论文", platform:"GitHub", level:"进阶 → 高级", priority:"核心必修", effort:"20–40 小时", format:"源码 + 论文 + 博客", tags:["Attention","IO-aware","Tiling","HBM"],
+  desc:"IO-aware 的精确 Attention 算法，通过分块(tiling)减少 HBM 读写，将注意力从 O(S²) 显存降到 O(S)，是现代推理/训练的标配。",
+  why:"理解 GPU 内存层级与 kernel 设计的教科书级案例；读其源码比任何书都更能教内存感知 kernel 设计。",
+  url:"https://github.com/Dao-AILab/flash-attention", secondary:"https://arxiv.org/abs/2205.14135", secondaryLabel:"论文", order:0 },
+
+{ id:"flashinfer", title:"FlashInfer: 高性能 LLM 推理 Attention 库", org:"FlashInfer Team", year:2025, stage:3, focus:"Attention 算子", type:"开源项目", platform:"GitHub", level:"进阶 → 高级", priority:"强烈推荐", effort:"15–25 小时", format:"源码 + 文档", tags:["Attention","推理","KV Cache","Block-Sparse"],
+  desc:"面向 LLM 推理的高性能 Attention 库，支持 Paged KV-Cache、块稀疏注意力，被 vLLM/SGLang 等引擎采用。",
+  why:"生产级 Attention 实现的参考；与 FlashAttention 对照可理解推理场景的特殊优化（如 paged KV）。",
+  url:"https://github.com/flashinfer-ai/flashinfer", order:1 },
+
+{ id:"mit-65940", title:"MIT 6.5940: TinyML & Efficient Deep Learning Computing", org:"MIT / Song Han", year:2024, stage:3, focus:"高效推理与压缩", type:"公开课程", platform:"MIT Han Lab", level:"进阶", priority:"强烈推荐", effort:"30–50 小时", format:"讲座 + 作业", tags:["量化","剪枝","蒸馏","高效推理"],
+  desc:"韩松老师的高效深度学习课程，覆盖量化、剪枝、知识蒸馏与高效推理架构，作业实践导向。",
+  why:"模型压缩与高效推理最系统的课程，是 Stage 3 压缩主题的主线。",
+  url:"https://hanlab.mit.edu/courses/2024-fall-65940", order:2 },
+
+{ id:"cuda-triton-learning", title:"CUDA & Triton Learning: Flash Attention 实现", org:"shizhengLi / 开源", year:2025, stage:3, focus:"Attention 算子", type:"GitHub 教程", platform:"GitHub", level:"进阶", priority:"强烈推荐", effort:"20–40 小时", format:"代码 + 学习路径", tags:["FlashAttention","Triton","CUTLASS","FlashMLA"],
+  desc:"从 CUDA 基础到 Flash Attention 全景的完整学习路径，含朴素实现、Triton v2、CUTLASS 深度学习与 FlashMLA 生产实践。",
+  why:"把 FlashAttention 从理论到生产级实现串成一条可执行的练习路径，含基础/进阶/专家三档。",
+  url:"https://github.com/shizhengLi/cuda-triton-learning", order:3 },
+
+{ id:"cutlass", title:"CUTLASS: CUDA Templates for Linear Algebra", org:"NVIDIA", year:2025, stage:3, focus:"GEMM 算子", type:"开源项目", platform:"GitHub", level:"高级", priority:"强烈推荐", effort:"20–40 小时", format:"源码 + 示例 + 文档", tags:["GEMM","矩阵乘","Tensor Core","模板"],
+  desc:"NVIDIA 官方高性能线性代数 CUDA 模板库，是写生产级 GEMM/Tensor Core kernel 的基础设施。",
+  why:"GEMM 是深度学习的核心算子；理解 CUTLASS 的 Tiling 与 Tensor Core 用法是高级 kernel 工程的必修。",
+  url:"https://github.com/NVIDIA/cutlass", order:4 },
+
+{ id:"tiny-cuda-nn", title:"tiny-cuda-nn: 高效 NN 训练框架", org:"NVIDIA Labs", year:2023, stage:3, focus:"Kernel 实践", type:"开源项目", platform:"GitHub", level:"高级", priority:"选修拓展", effort:"按需", format:"源码", tags:["CUDA","全连接","fused kernel","实战"],
+  desc:"NVIDIA 的高效全连接网络 CUDA 训练框架，含大量高度优化的真实 kernel。",
+  why:"NVIDIA 工程师推荐的实战 kernel 阅读材料，学习内存感知 kernel 设计的好范例。",
+  url:"https://github.com/NVlabs/tiny-cuda-nn", order:5 },
+
+{ id:"flash-attn-blog", title:"Reimplementing FlashAttention（实践博客）", org:"AmineDiro", year:2025, stage:3, focus:"Attention 算子", type:"博客", platform:"个人博客", level:"进阶", priority:"选修拓展", effort:"4–8 小时", format:"长文 + Triton 代码", tags:["FlashAttention","Triton","Profiling","实践"],
+  desc:"用 Triton 忠实复现 FlashAttention v1，用 NVIDIA 工具 profiling 并迭代优化，讲解 GPU 内存层级与后续版本演进动机。",
+  why:"把“读论文”变成“动手实现 + 看 profiler 找瓶颈”的范例，适合 Stage 3 实战入门。",
+  url:"https://aminediro.com/posts/flash_attn", order:6 },
+
+{ id:"quantization-overview", title:"LLM 量化技术综述与实践", org:"社区整理", year:2025, stage:3, focus:"量化压缩", type:"教程合集", platform:"通用", level:"进阶", priority:"强烈推荐", effort:"10–20 小时", format:"博客 + 代码", tags:["量化","INT8","FP8","AWQ","GPTQ"],
+  desc:"覆盖 GPTQ、AWQ、SmoothQuant、FP8/INT4 等主流 LLM 量化方案，含原理与推理部署实践。",
+  why:"推理部署中降本增效的关键技术；与 MIT 6.5940 配对学习效果更好。",
+  url:"https://github.com/AutoGPTQ/AutoGPTQ", secondary:"https://github.com/casper-hansen/AutoAWQ", secondaryLabel:"AutoAWQ 仓库", order:7 },
+
+/* ===== Stage 4 · 单机推理引擎与源码 ===== */
+{ id:"vllm", title:"vLLM: 高吞吐 LLM 推理引擎", org:"UC Berkeley / vLLM Team", year:2025, stage:4, focus:"推理引擎", type:"开源项目", platform:"GitHub", level:"进阶", priority:"核心必修", effort:"持续学习", format:"源码 + 文档", tags:["PagedAttention","Continuous Batching","Serving"],
+  desc:"高吞吐 LLM 服务引擎，首创 PagedAttention 与 Continuous Batching，显存利用率 95%+，生态最大、模型支持最广。V1 重构后引入优化执行循环与零开销前缀缓存。",
+  why:"推理引擎事实标准与学习主轴；社区最大、文档完善，是入门推理系统的首选。",
+  url:"https://github.com/vllm-project/vllm", secondary:"https://docs.vllm.ai/", secondaryLabel:"官方文档", order:0 },
+
+{ id:"sglang", title:"SGLang: 高吞吐结构化推理引擎", org:"UC Berkeley / LMSYS", year:2025, stage:4, focus:"推理引擎", type:"开源项目", platform:"GitHub", level:"进阶", priority:"核心必修", effort:"持续学习", format:"源码 + 文档", tags:["RadixAttention","前缀缓存","结构化输出","多模态"],
+  desc:"基于 RadixAttention 的高吞吐引擎，前缀缓存复用极致，多轮对话吞吐可达 vLLM 的 5 倍；内置结构化输出（JSON/正则约束解码）与多模态支持。",
+  why:"吞吐基准领先、结构化输出能力强，被字节、xAI 等采用；与 vLLM 对照学习能理解不同调度与缓存策略。",
+  url:"https://github.com/sgl-project/sglang", order:1 },
+
+{ id:"tensorrt-llm", title:"TensorRT-LLM: NVIDIA 深度优化推理引擎", org:"NVIDIA", year:2025, stage:4, focus:"推理引擎", type:"开源项目", platform:"GitHub", level:"进阶 → 高级", priority:"强烈推荐", effort:"持续学习", format:"源码 + 文档", tags:["FP8","INT4","内核优化","NVIDIA"],
+  desc:"NVIDIA 面向 LLM 的深度优化引擎，支持 FP8/FP4/INT4 量化与内核级优化，在 NVIDIA GPU 上性能接近硬件极限，适合对延迟要求极高的生产场景。",
+  why:"极致 NVIDIA 性能的代表；学习其量化与 in-flight batching 可理解工业级优化的天花板。",
+  url:"https://github.com/NVIDIA/TensorRT-LLM", secondary:"https://nvidia.github.io/TensorRT-LLM/", secondaryLabel:"官方文档", order:2 },
+
+{ id:"llama-cpp", title:"llama.cpp: 跨平台本地推理框架", org:"Georgi Gerganov / 社区", year:2025, stage:4, focus:"本地推理", type:"开源项目", platform:"GitHub", level:"入门 → 中级", priority:"强烈推荐", effort:"按需", format:"源码 + 文档", tags:["GGUF","量化","CPU/GPU","跨平台"],
+  desc:"主打“普通电脑甚至手机上跑大模型”的轻量推理框架，支持 1.5–8 位整数量化，跨 Windows/Linux/Mac/移动端，完全开源。",
+  why:"硬件门槛最低、最适合个人学习与原型验证；Ollama 即基于它封装。读源码可理解极简推理实现。",
+  url:"https://github.com/ggml-org/llama.cpp", order:3 },
+
+{ id:"ollama", title:"Ollama: 一键本地大模型运行平台", org:"Ollama / 社区", year:2025, stage:4, focus:"本地推理", type:"开源项目", platform:"GitHub", level:"入门", priority:"选修拓展", effort:"2–5 小时", format:"CLI + API", tags:["本地部署","一键","隐私","边缘"],
+  desc:"基于 Go 与 llama.cpp 封装的轻量本地推理平台，一条命令启动模型服务，冷启动约 12 秒，支持离线运行。",
+  why:"快速体验与原型验证最便捷的入口；适合教学演示与隐私敏感场景，但并发能力弱，不适合大规模服务。",
+  url:"https://github.com/ollama/ollama", order:4 },
+
+{ id:"lightllm", title:"LightLLM: 轻量高性能推理框架", org:"ModelTC / 开源", year:2025, stage:4, focus:"推理引擎", type:"开源项目", platform:"GitHub", level:"进阶", priority:"选修拓展", effort:"按需", format:"源码 + 文档", tags:["TokenAttention","异步","零填充","高吞吐"],
+  desc:"Python 轻量推理框架，三进程异步协作、TokenAttention 零浪费显存管理与零填充 Attention，Llama2-13B 吞吐 480 tok/s。",
+  why:"模块化、易扩展，适合作为研究不同调度与显存策略的对照引擎。",
+  url:"https://github.com/ModelTC/LightLLM", order:5 },
+
+{ id:"lmdeploy", title:"LMDeploy: 国产推理部署框架", org:"OpenMMLab / 上海 AI Lab", year:2025, stage:4, focus:"推理引擎", type:"开源项目", platform:"GitHub", level:"进阶", priority:"强烈推荐", effort:"按需", format:"源码 + 文档", tags:["中文","推理部署","量化","TurboMind"],
+  desc:"面向大模型推理部署的开源框架，含 TurboMind 引擎与 W4A16 量化，支持多卡张量并行，中文文档完善。",
+  why:"国产推理框架代表，中文生态友好；适合对照学习并理解国产硬件适配思路。",
+  url:"https://github.com/InternLM/lmdeploy", order:6 },
+
+{ id:"xinferr", title:"XInference: 分布式推理框架", org:"Xorbitsai / 开源", year:2025, stage:4, focus:"推理引擎", type:"开源项目", platform:"GitHub", level:"进阶", priority:"选修拓展", effort:"按需", format:"源码 + 文档", tags:["分布式","Actor","P/D 分离","多模态"],
+  desc:"基于 Actor 模型的分布式推理框架，支持 P/D 分离部署、多模态与 K8s 扩展，集成 DeepEP/FlashMLA 算子。",
+  why:"企业级大规模部署的参考实现；学习其分离式部署与调度可衔接 Stage 5。",
+  url:"https://github.com/xorbitsai/inference", order:7 },
+
+{ id:"teaching-engines", title:"教学型推理引擎集合（mini-infer / Mini-SGLang / tiny-llm）", org:"社区 / 开源", year:2025, stage:4, focus:"推理引擎（教学）", type:"开源项目", platform:"GitHub", level:"进阶", priority:"核心必修", effort:"20–40 小时", format:"源码（精简）", tags:["教学","源码精读","调度器","KV Cache"],
+  desc:"mini-infer、Mini-SGLang、tiny-llm 等精简教学型推理引擎，去掉生产工程的复杂度，保留请求→调度→KV Cache→Kernel→响应的核心数据流。",
+  why:"理解推理引擎内部结构的最佳起点；代码量小可完整读懂，是进入 vLLM/SGLang 源码前的关键跳板。",
+  url:"https://github.com/InternLM/lmdeploy", secondary:"https://github.com/sgl-project/sglang", secondaryLabel:"对照生产实现", order:8,
+  access:"搜索 GitHub “mini-infer / tiny-llm / Mini-SGLang” 获取最新教学仓库" },
+
+{ id:"pagedattention-paper", title:"PagedAttention / Efficient Memory Management for LLM Serving（论文）", org:"UC Berkeley", year:2023, stage:4, focus:"推理引擎原理", type:"论文", platform:"arXiv", level:"进阶", priority:"核心必修", effort:"3–6 小时", format:"论文", tags:["PagedAttention","显存","分页","vLLM"],
+  desc:"vLLM 的奠基论文，借鉴 OS 分页机制管理 KV Cache，解决显存碎片化、预留浪费与并发限制。",
+  why:"现代推理引擎显存管理的理论基础，读通它才能理解 vLLM 调度器的核心设计。",
+  url:"https://arxiv.org/abs/2309.06180", order:9 },
+
+/* ===== Stage 5 · 分布式推理与集合通信 ===== */
+{ id:"nccl", title:"NCCL: NVIDIA 集合通信库", org:"NVIDIA", year:2025, stage:5, focus:"集合通信", type:"开源项目 + 文档", platform:"NVIDIA", level:"进阶", priority:"核心必修", effort:"10–20 小时", format:"源码 + 文档", tags:["AllReduce","AllToAll","Ring","NVLink"],
+  desc:"NVIDIA 官方集合通信库，基于 Ring AllReduce，是 PyTorch DDP/FSDP 与 vLLM/SGLang 多卡通信的默认底座。",
+  why:"分布式通信的基石；理解其原语（AllReduce/AllGather/ReduceScatter/AllToAll）是 Stage 5 的起点。",
+  url:"https://github.com/NVIDIA/nccl", secondary:"https://docs.nvidia.com/deeplearning/nccl-user-guide/", secondaryLabel:"官方文档", order:0 },
+
+{ id:"nvshmem", title:"NVSHMEM: GPU 发起的对称堆通信库", org:"NVIDIA", year:2025, stage:5, focus:"集合通信", type:"开源项目 + 文档", platform:"NVIDIA", level:"高级", priority:"强烈推荐", effort:"15–25 小时", format:"源码 + 文档", tags:["PGAS","RDMA","单边通信","融合"],
+  desc:"基于 PGAS 模型的对称堆通信库，支持 GPU 单边 put/get 与信号，可在 kernel 内发起通信，是通信计算融合的唯一实用方案。",
+  why:"理解 DeepEP 等新一代 MoE 通信库的基础；与 NCCL 对照可理解 kernel 级通信与 stream 级通信的差异。",
+  url:"https://github.com/NVIDIA/nvshmem", order:1 },
+
+{ id:"deepep", title:"DeepEP: MoE 专家并行 All-to-All 通信库", org:"DeepSeek", year:2025, stage:5, focus:"专家并行通信", type:"开源项目", platform:"GitHub", level:"高级", priority:"核心必修", effort:"15–25 小时", format:"源码 + 分析", tags:["MoE","AllToAll","NVSHMEM","IBGDA","FP8"],
+  desc:"DeepSeek 开源的 MoE all-to-all 通信库，依赖 NVLink/RDMA/NVSHMEM，提供高吞吐(HT)与低延迟(LL)两套 kernel，零 SM 占用，FP8 压缩通信量减半。",
+  why:"2025 年 MoE 推理通信的标杆实现；理解它是掌握现代分布式推理的关键，也是 hook 式通信计算重叠的范例。",
+  url:"https://github.com/deepseek-ai/DeepEP", order:2 },
+
+{ id:"deepspeed", title:"DeepSpeed: 大规模分布式训练优化系统", org:"Microsoft", year:2025, stage:5, focus:"分布式训练", type:"开源项目", platform:"GitHub", level:"进阶", priority:"强烈推荐", effort:"按需", format:"源码 + 文档", tags:["ZeRO","3D 并行","Offload","训练"],
+  desc:"微软开源的大模型训练优化系统，提供 ZeRO 显存优化、3D 并行（DP+TP+PP）、CPU Offload 等，支撑万亿参数训练。",
+  why:"分布式训练的事实工具之一；理解 ZeRO 三个阶段是掌握显存优化的核心。",
+  url:"https://github.com/microsoft/DeepSpeed", order:3 },
+
+{ id:"megatron-lm", title:"Megatron-LM: 大模型张量并行训练框架", org:"NVIDIA", year:2025, stage:5, focus:"分布式训练", type:"开源项目", platform:"GitHub", level:"进阶 → 高级", priority:"强烈推荐", effort:"按需", format:"源码 + 论文", tags:["张量并行","TP","3D 并行","GEMM 切分"],
+  desc:"NVIDIA 开源的大模型训练框架，张量并行（TP）的标杆实现，提供行列并行切分与 3D 并行方案。",
+  why:"张量并行的工程标准；读其源码可理解单层矩阵如何切到多卡并合并结果。",
+  url:"https://github.com/NVIDIA/Megatron-LM", order:4 },
+
+{ id:"pytorch-fsdp", title:"PyTorch FSDP: 完全分片数据并行", org:"PyTorch / Meta", year:2025, stage:5, focus:"分布式训练", type:"官方文档 + 代码", platform:"PyTorch", level:"进阶", priority:"强烈推荐", effort:"8–15 小时", format:"文档 + 教程", tags:["ZeRO","分片","数据并行","PyTorch"],
+  desc:"PyTorch 原生的完全分片数据并行，等价于 ZeRO-3，将参数/梯度/优化器状态分片到各卡，是训练大模型的主流方案。",
+  why:"比 DeepSpeed 更贴近 PyTorch 原生用法；理解它即可掌握生产训练的显存优化主路径。",
+  url:"https://docs.pytorch.org/docs/stable/fsdp.html", order:5 },
+
+{ id:"parallelism-overview-cn", title:"大模型并行训练全景解析（DP/PP/TP/EP）", org:"鲜枣课堂 / 社区", year:2025, stage:5, focus:"并行策略", type:"中文教程", platform:"36kr / 博客", level:"入门 → 进阶", priority:"强烈推荐", effort:"3–5 小时", format:"长文 + 图示", tags:["中文","DP","PP","TP","EP","ZeRO"],
+  desc:"用大量图示讲透数据并行、流水线并行、张量并行、专家并行与 ZeRO，含 3D 并行与混合并行，中文社区高质科普。",
+  why:"中文读者建立并行策略全景的最佳入门材料，图文并茂、概念清晰，是进入源码前的好预习。",
+  url:"https://36kr.com/p/3569388879248521", order:6 },
+
+{ id:"ring-allreduce-cn", title:"分布式训练与 Ring AllReduce 详解（中文）", org:"社区", year:2025, stage:5, focus:"集合通信", type:"中文教程", platform:"CSDN / 博客", level:"进阶", priority:"强烈推荐", effort:"3–5 小时", format:"长文 + 图示", tags:["中文","Ring AllReduce","DDP","Bucket","通信重叠"],
+  desc:"从数据并行讲到 Ring AllReduce 的两阶段(Scatter-Reduce/AllGather)工作原理，再到 PyTorch DDP 的 Bucket 分桶与计算通信重叠。",
+  why:"把 NCCL 背后的 Ring AllReduce 算法讲得最透彻的中文资料之一，配 Stage 5 通信主线。",
+  url:"https://blog.csdn.net/AggressiveYu/article/details/155611381", order:7 },
+
+{ id:"nccl-vs-nvshmem", title:"NCCL vs NVSHMEM：两种通信范式对比", org:"Diego Cao / 博客", year:2025, stage:5, focus:"集合通信", type:"博客", platform:"个人博客", level:"高级", priority:"选修拓展", effort:"1–2 小时", format:"长文", tags:["NCCL","NVSHMEM","MoE","DeepEP"],
+  desc:"对比 NCCL 与 NVSHMEM 的适用场景：训练/稠密推理用 NCCL，MoE 与通信计算融合用 NVSHMEM，并解析 DeepEP 的双 kernel 设计。",
+  why:"帮助在 NCCL 与 NVSHMEM 间做选型决策，理解为什么 MoE 通信需要 NVSHMEM 式单边通信。",
+  url:"https://diegocao.github.io/blog/nccl-vs-nvshmem.html", order:8 },
+
+/* ===== Stage 6 · Profiling、Benchmark 与优化闭环 ===== */
+{ id:"nsight-systems", title:"NVIDIA Nsight Systems（官方 Profiler）", org:"NVIDIA", year:2025, stage:6, focus:"性能分析", type:"官方工具 + 文档", platform:"NVIDIA", level:"进阶", priority:"核心必修", effort:"8–15 小时", format:"工具 + 文档 + 教程", tags:["Profiling","Trace","Timeline","GPU"],
+  desc:"NVIDIA 官方系统级 Profiler，可视化 CPU/GPU 时间线、kernel 耗时、内存与通信，是定位性能瓶颈的主力工具。",
+  why:"性能工程闭环的核心工具；任何“为什么慢”都应先用 Nsight Systems 量出 Trace 再下结论。",
+  url:"https://docs.nvidia.com/nsight-systems/", order:0 },
+
+{ id:"nsight-compute", title:"NVIDIA Nsight Compute（Kernel Profiler）", org:"NVIDIA", year:2025, stage:6, focus:"性能分析", type:"官方工具 + 文档", platform:"NVIDIA", level:"高级", priority:"强烈推荐", effort:"8–15 小时", format:"工具 + 文档", tags:["Kernel","Roofline","Occupancy","Profiling"],
+  desc:"NVIDIA 官方 kernel 级 Profiler，提供每个 kernel 的 Roofline、Occupancy、内存带宽与 stalled 原因。",
+  why:"kernel 优化的显微镜；与 Nsight Systems 配合可形成系统→kernel 的两级定位闭环。",
+  url:"https://docs.nvidia.com/nsight-compute/", order:1 },
+
+{ id:"pytorch-profiler", title:"PyTorch Profiler + TensorBoard", org:"PyTorch / Meta", year:2025, stage:6, focus:"性能分析", type:"官方文档", platform:"PyTorch", level:"进阶", priority:"强烈推荐", effort:"4–8 小时", format:"文档 + 教程", tags:["Profiling","Trace","PyTorch","TensorBoard"],
+  desc:"PyTorch 内置 Profiler，记录算子耗时、CPU/GPU 交互与内存，可导出 TensorBoard Trace 可视化。",
+  why:"框架层性能分析最便捷的入口；适合在进入 Nsight 前先做粗粒度定位。",
+  url:"https://docs.pytorch.org/tutorials/recipes/recipes/profiler_recipe.html", order:2 },
+
+{ id:"genai-perf", title:"NVIDIA GenAI-Perf: LLM 推理基准测试工具", org:"NVIDIA", year:2025, stage:6, focus:"Benchmark", type:"开源工具", platform:"NVIDIA", level:"进阶", priority:"强烈推荐", effort:"6–12 小时", format:"工具 + 文档", tags:["TTFT","ITL","吞吐","压测"],
+  desc:"NVIDIA 开源的 LLM 基准工具，支持任意 OpenAI 兼容 API（vLLM/SGLang/TRT-LLM），输出 TTFT/ITL/TPS/RPS 等标准化指标与吞吐-延迟曲线。",
+  why:"LLM 推理 benchmark 的标准化工具；用统一口径度量不同引擎与配置，结论才可比较。",
+  url:"https://github.com/NVIDIA/TensorRT-LLM/tree/main/benchmarks/cpp", order:3 },
+
+{ id:"guidellm", title:"GuideLLM: LLM 负载生成与压测工具", org:"社区 / 开源", year:2025, stage:6, focus:"Benchmark", type:"开源工具", platform:"GitHub", level:"进阶", priority:"强烈推荐", effort:"6–12 小时", format:"工具 + 文档", tags:["压测","并发","固定速率","sweep"],
+  desc:"LLM 压测工具，支持并发、固定速率与 sweep 流量模式，输出 TTFT/ITL/吞吐/尾延迟，适合建立生产负载模型。",
+  why:"比单一并发压测更贴近真实流量；用它能找到系统的饱和点与 SLA 边界。",
+  url:"https://github.com/guidellm/guidellm", order:4 },
+
+{ id:"llmperf", title:"LLMPerf: LLM API 性能评估工具", org:"Ray Project", year:2024, stage:6, focus:"Benchmark", type:"开源工具", platform:"GitHub", level:"进阶", priority:"选修拓展", effort:"4–8 小时", format:"工具", tags:["压测","API","TTFT","吞吐"],
+  desc:"评估 LLM API 性能的工具，含负载测试与正确性测试，多并发下测量 token 间延迟与吞吐。",
+  why:"轻量、易上手；注意其 TPOT 口径与 GenAI-Perf 不同（含 TTFT），对比时需统一口径。",
+  url:"https://github.com/ray-project/llmperf", order:5 },
+
+{ id:"inference-perf", title:"inference-perf: Kubernetes 推理基准", org:"Kubernetes SIGs", year:2025, stage:6, focus:"Benchmark", type:"开源工具", platform:"GitHub", level:"进阶", priority:"选修拓展", effort:"按需", format:"工具 + 文档", tags:["K8s","推理","压测","标准化"],
+  desc:"Kubernetes 社区维护的推理性能基准工具，标准化 LLM serving 压测，适合 K8s 部署场景。",
+  why:"面向生产 K8s 环境的标准化基准，衔接 Stage 7 部署主题。",
+  url:"https://github.com/kubernetes-sigs/inference-perf", order:6 },
+
+{ id:"nvidia-benchmark-blog", title:"LLM 推理基准测试系列博客（NVIDIA）", org:"NVIDIA Developer", year:2025, stage:6, focus:"Benchmark 方法论", type:"官方博客", platform:"NVIDIA", level:"进阶", priority:"强烈推荐", effort:"3–5 小时", format:"系列文章", tags:["TTFT","ITL","吞吐","Pareto","TCO"],
+  desc:"NVIDIA 官方 LLM benchmark 系列文章，讲清 TTFT/ITL/TPS/RPS 定义、吞吐-延迟权衡曲线、Pareto 前沿与 TCO 估算方法论。",
+  why:"把指标定义与测试方法论讲得最权威；做 benchmark 前必读，避免口径混乱导致结论不可比。",
+  url:"https://developer.nvidia.com/blog/llm-inference-benchmarking-fundamental-concepts/", secondary:"https://docs.nvidia.com/nim/benchmarking/llm/latest/metrics.html", secondaryLabel:"指标定义文档", order:7 },
+
+{ id:"benchmark-metrics-cn", title:"LLM 性能压测指标详解（中文）", org:"社区", year:2025, stage:6, focus:"Benchmark 方法论", type:"中文教程", platform:"CSDN / 博客", level:"入门 → 进阶", priority:"强烈推荐", effort:"2–4 小时", format:"长文", tags:["中文","QPS","Latency","TTFT","ITL"],
+  desc:"用中文讲透 LLM 压测各项指标（QPS、TTFT、ITL、TPOT、吞吐）的定义与计算公式，并对比各压测工具的口径差异。",
+  why:"中文读者理解 benchmark 指标的速查材料，与 NVIDIA 官方博客互补。",
+  url:"https://blog.csdn.net/m0_59163425/article/details/156455729", order:8 },
+
+/* ===== Stage 7 · 生产部署与研究扩展 ===== */
+{ id:"dynamo", title:"NVIDIA Dynamo: 数据中心级分布式推理编排", org:"NVIDIA", year:2025, stage:7, focus:"生产 Serving", type:"开源项目", platform:"GitHub", level:"高级", priority:"核心必修", effort:"持续学习", format:"源码 + 文档", tags:["P/D 分离","KV 路由","K8s","SLA"],
+  desc:"NVIDIA 开源的数据中心级推理编排层（Triton 后继），在 vLLM/SGLang/TRT-LLM 之上提供 P/D 分离、KV 感知路由、多层 KV 缓存与 SLA 驱动自动扩缩容。Rust 编写、Python 扩展。",
+  why:"生产分布式推理编排的标杆；理解它的 P/D 分离与 KV 路由是掌握现代生产推理系统的关键。",
+  url:"https://github.com/ai-dynamo/dynamo", secondary:"https://developer.nvidia.com/dynamo", secondaryLabel:"NVIDIA 介绍页", order:0 },
+
+{ id:"triton-server", title:"Dynamo-Triton: 通用推理服务器", org:"NVIDIA", year:2025, stage:7, focus:"生产 Serving", type:"开源项目", platform:"GitHub", level:"进阶", priority:"强烈推荐", effort:"按需", format:"源码 + 文档", tags:["动态批处理","多框架","K8s","Prometheus"],
+  desc:"NVIDIA 通用推理服务器（前 Triton Inference Server），支持 TensorRT/PyTorch/ONNX 等多后端，动态图批处理、并发执行，可集成 K8s 与 Prometheus 监控，适合非 LLM 模型。",
+  why:"通用模型服务化的工业标准；与 Dynamo 配合覆盖从通用模型到 LLM 的生产部署。",
+  url:"https://github.com/triton-inference-server/server", order:1 },
+
+{ id:"kserve", title:"KServe: Kubernetes 原生模型 Serving 标准", org:"KServe / CNCF", year:2025, stage:7, focus:"生产部署", type:"开源项目", platform:"GitHub", level:"进阶", priority:"强烈推荐", effort:"按需", format:"源码 + 文档", tags:["K8s","Serverless","推理","CRD"],
+  desc:"CNCF 的 Kubernetes 原生模型 Serving 标准，提供 Serverless 推理、自动扩缩容与多框架支持，是 K8s 上部署推理服务的主流方案。",
+  why:"K8s 上推理部署的标准入口；理解 CRD 与自动扩缩容是生产部署的必备。",
+  url:"https://github.com/kserve/kserve", order:2 },
+
+{ id:"gpu-operator", title:"NVIDIA GPU Operator（K8s GPU 管理）", org:"NVIDIA", year:2025, stage:7, focus:"生产部署", type:"开源项目 + 文档", platform:"NVIDIA / K8s", level:"进阶", priority:"强烈推荐", effort:"按需", format:"源码 + 文档", tags:["K8s","GPU","驱动","MIG"],
+  desc:"在 K8s 上自动化管理 NVIDIA GPU 驱动、容器运行时、DCGM 监控与 MIG 切片的 Operator，是 K8s 跑 GPU 推理的前提。",
+  why:"K8s + GPU 生产部署的基础设施；没有它就无法在 K8s 上规范使用 GPU。",
+  url:"https://github.com/NVIDIA/gpu-operator", order:3 },
+
+{ id:"llm-d", title:"llm-d: Kubernetes 原生 LLM 推理调度", org:"社区 / 开源", year:2025, stage:7, focus:"生产部署", type:"开源项目", platform:"GitHub", level:"高级", priority:"选修拓展", effort:"按需", format:"源码 + 文档", tags:["K8s","LLM","调度","P/D"],
+  desc:"面向 K8s 的原生 LLM 推理调度项目，提供分布式推理的声明式部署与调度能力。",
+  why:"K8s 上 LLM 分布式推理编排的新兴方案，可对照 Dynamo 理解不同编排思路。",
+  url:"https://github.com/llm-d/llm-d", order:4 },
+
+{ id:"dynamo-blog", title:"NVIDIA Dynamo 深度解析：为什么它取代 Triton 做 LLM Serving", org:"Luca Berton / 博客", year:2026, stage:7, focus:"生产 Serving", type:"博客", platform:"个人博客", level:"高级", priority:"强烈推荐", effort:"2–3 小时", format:"长文", tags:["Dynamo","Triton","NIM","P/D 分离","选型"],
+  desc:"深度对比 Dynamo/Triton/NIM 的定位与能力，讲清 P/D 分离为何是关键创新，并给出何时用 Dynamo vs NIM vs vLLM 的选型建议。",
+  why:"生产推理选型的好材料；帮助在 Triton/NIM/Dynamo/vLLM 间做架构决策。",
+  url:"https://lucaberton.com/blog/nvidia-dynamo-inference-framework-distributed-serving-2026", order:5 },
+
+{ id:"ai-systems-curriculum", title:"AI Systems & C++/LLM Infra 学习课表", org:"dextermayhewjd / 开源", year:2025, stage:7, focus:"系统化课表", type:"GitHub 仓库", platform:"GitHub", level:"入门 → 高级", priority:"选修拓展", effort:"长期", format:"课表 + 代码练习", tags:["C++","系统","并行","LLM Infra"],
+  desc:"系统化学习 C++/系统/并行计算/LLM 系统的长期课表，整合 Stanford CS106L/CS110/CS149、CMU 15-418/10-414/11-868、MIT 6.5940/6.824、MLC.ai 等课程并配代码练习。",
+  why:"一份把多门名校系统课串成路线的优质长期学习计划，适合规划系统性进阶。",
+  url:"https://github.com/dextermayhewjd/AI-Systems-C-LLM-Infra", order:6 },
+
+{ id:"inference-eng-visual", title:"Inference Engineering Visual Guides", org:"Vizuara AI", year:2025, stage:7, focus:"推理工程可视化", type:"交互式教程", platform:"GitHub Pages", level:"入门 → 进阶", priority:"选修拓展", effort:"3–6 小时", format:"可视化教程", tags:["可视化","推理引擎","选型","对比"],
+  desc:"推理工程的可视化指南，含 vLLM/SGLang/TRT-LLM 引擎对比、决策流程图与代码示例，交互式呈现。",
+  why:"可视化讲解推理引擎选型与原理，适合初学者建立直觉，可作为 Stage 4 的图形化辅助。",
+  url:"https://vizuaraai.github.io/inference-engineering-visual-guides/visual_walkthroughs/13_inference_engines.html", order:7 }
+
+],
+
+/* ---------- 学习方法论 ---------- */
+principles: [
+  { title:"先依赖、后专题", desc:"先理解模型执行、硬件和性能模型，再进入框架新特性，避免只记 API 名称。" },
+  { title:"教程与源码配对", desc:"每学一项机制，至少在教学型仓库或生产仓库中找到对应实现和调用链。" },
+  { title:"结论必须可测", desc:"任何“更快、更省显存”都应绑定模型、硬件、流量、版本和指标定义。" },
+  { title:"跨平台抽象", desc:"把 CUDA/NCCL 的知识抽象成并行层次、存储层次、通信原语和运行时，再映射到 CANN/HCCL。" }
+]
+
+};
